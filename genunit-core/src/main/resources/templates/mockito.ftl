@@ -1,6 +1,7 @@
 package ${packageName};
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,15 @@ public class ${className}Test {
   public void ${methodDeclaration.methodName}() {
 <#list methodDeclaration.params as methodParam>
     ${methodParam.fieldType} ${methodParam.fieldName} = null;
+</#list>
+<#list fieldDeclarations as fieldDeclaration>
+<#list fieldDeclaration.calls as call>
+    when(${call.fieldReference}.${call.methodName}(
+<#list call.params as param>
+      ${param.fieldName},
+</#list>
+    )).then();
+</#list>
 </#list>
     ${classNameVar}.${methodDeclaration.methodName}(${methodDeclaration.methodArgs});
   }
