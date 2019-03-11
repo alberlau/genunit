@@ -1,14 +1,15 @@
 package genunit;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MetodDeclarationMeta {
+public class MethodDeclarationMeta {
     private String fieldReference;
     private String methodName;
-    private List<FieldDeclarationMeta> params;
+    private List<FieldDeclarationMeta> params = new ArrayList<>();
     private String methodArgs;
 
-    public MetodDeclarationMeta(String methodName) {
+    public MethodDeclarationMeta(String methodName) {
         this.methodName = methodName;
     }
 

@@ -2,14 +2,24 @@ package genunit;
 
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
-import com.github.javaparser.JavaParser;
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.SimpleName;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.resolution.types.ResolvedType;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.model.typesystem.ReferenceTypeImpl;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import fmpp.ProcessingException;
 import fmpp.progresslisteners.ConsoleProgressListener;
 import fmpp.setting.SettingException;
@@ -23,13 +33,19 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Gen {
 
     public static void gen(File basedir, String code) throws SettingException, ProcessingException, IOException, TemplateException {
-        CompilationUnit cu = JavaParser.parse(code);
+        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+        combinedTypeSolver.add(new ReflectionTypeSolver());
+
+        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
+        StaticJavaParser.getConfiguration().setSymbolResolver(symbolSolver);
+        CompilationUnit cu = StaticJavaParser.parse(code);
         extractPackageDeclaration(cu);
         extractClassName(cu);
         extractConstructorDeclaration(cu);
@@ -47,26 +63,43 @@ public class Gen {
             .reduce(Stream.of(cu), Stream::concat)
             .filter(node -> node.getClass().getSimpleName().equals("MethodCallExpr"))
             .filter(node -> ((MethodCallExpr)node).getScope().isPresent())
-            .map(node -> {
-                SimpleName methodName = ((MethodCallExpr) node).getName();
-                MetodDeclarationMeta metodDeclarationMeta = new MetodDeclarationMeta(methodName.asString());
-                metodDeclarationMeta.setFieldReference(((MethodCallExpr)node).getArguments().toString());
+            .forEach(node -> {
+                MethodCallExpr methodCallExpr = (MethodCallExpr) node;
+                SimpleName methodName = methodCallExpr.getName();
+                String varRef = methodCallExpr.getScope().get().toString();
+                Optional<FieldDeclarationMeta> fieldDeclaration =
+                    ((List<FieldDeclarationMeta>) MetadataHolder.getMetadata()
+                        .get("fieldDeclarations")).stream().filter(fieldDeclarationMeta -> fieldDeclarationMeta.getFieldName().equals(varRef)).findFirst();
 
-//                List<FieldDeclarationMeta> params = ((MethodCallExpr) node).getArguments().stream().map(parameter -> {
-//                    String type = parameter.getType().asString();
-//                    String varName = parameter.getName().getIdentifier();
-//                    FieldDeclarationMeta fieldDeclarationMeta = new FieldDeclarationMeta(type, varName);
-//                    extractFullFieldTypeFromImports(cu, fieldDeclarationMeta);
-//                    return fieldDeclarationMeta;
-//                }).collect(Collectors.toList());
-//                methodDeclarationMeta.setParams(params);
+                if (fieldDeclaration.isPresent()) {
+                    FieldDeclarationMeta fieldDeclarationMeta = fieldDeclaration.get();
+                    MethodDeclarationMeta methodDeclarationMeta = new MethodDeclarationMeta(methodName.asString());
+                    NodeList<Expression> arguments = methodCallExpr.getArguments();
+                    arguments.stream().forEach(expression -> {
+                        String className = null;
+                        String name = null;
+                        if (expression instanceof NameExpr) {
+                            name = expression.asNameExpr().getName().asString();
+                        } else if (expression instanceof MethodCallExpr) {
+                            name =  expression.asMethodCallExpr().getTokenRange().get().toString();
+                        } else if (expression instanceof FieldAccessExpr) {
+                            name =  expression.asFieldAccessExpr().getTokenRange().get().toString();
+                        } else {
+                            throw new RuntimeException("Unsupported: " + expression.getClass().getName());
+                        }
+                        try {
+                            ResolvedType resolvedType = expression.calculateResolvedType();
+                            className = ((ReferenceTypeImpl) resolvedType).toRawType().asReferenceType().getQualifiedName();
+                        } catch (UnsolvedSymbolException e) {
+                            className = e.getName();
+                        }
+                        methodDeclarationMeta.getParams().add(new FieldDeclarationMeta(className, name));
+                    });
+                    methodDeclarationMeta.setFieldReference(varRef);
+                    fieldDeclarationMeta.getCalls().add(methodDeclarationMeta);
 
-
-
-//                metodDeclarationMeta.setMethodArgs();
-                return metodDeclarationMeta;
-            })
-            .collect(Collectors.toList());
+                }
+            });
 
     }
 
@@ -82,7 +115,6 @@ public class Gen {
         Configuration configuration = new Configuration();
         configuration.setClassForTemplateLoading(Gen.class, "/templates");
         Template template = configuration.getTemplate("mockito.ftl");
-//        template.setSetting("data", "eval('genunit.MetadataHolder.getMetadata()')");
         String subpath = "/build/generated/" + MetadataHolder.getMetadata().get("packageName").toString()
             .replaceAll("\\.", "/") + "/";
 
@@ -91,12 +123,7 @@ public class Gen {
             sub.mkdirs();
         }
         File file = new File(sub, MetadataHolder.getMetadata().get("className") + "Test.java");
-//        file.mkdirs();
         template.process(MetadataHolder.getMetadata(), new FileWriter(file));
-//        settings.set("sourceRoot", "/resources/templates");
-//        settings.set("outputRoot", output);
-//        settings.set("data", "eval('genunit.MetadataHolder.getMetadata()')");
-//        settings.execute();
     }
 
     private static void extractFieldDeclarations(CompilationUnit cu) {
@@ -121,13 +148,13 @@ public class Gen {
         cu.findAll(MethodDeclaration.class).stream().forEach(methodDeclaration -> {
             boolean aPublic = methodDeclaration.getModifiers().stream()
                 .anyMatch(modifier -> modifier.getKeyword().asString().equals("public"));
-            List<MetodDeclarationMeta> methods = (List) MetadataHolder.getMetadata().get("methodDeclarations");
+            List<MethodDeclarationMeta> methods = (List) MetadataHolder.getMetadata().get("methodDeclarations");
             if (methods == null) {
                 methods = new ArrayList<>();
                 MetadataHolder.getMetadata().put("methodDeclarations", methods);
             }
             if (aPublic) {
-                MetodDeclarationMeta methodDeclarationMeta = new MetodDeclarationMeta(methodDeclaration.getNameAsString());
+                MethodDeclarationMeta methodDeclarationMeta = new MethodDeclarationMeta(methodDeclaration.getNameAsString());
                 List<FieldDeclarationMeta> params = methodDeclaration.getParameters().stream().map(parameter -> {
                     String type = parameter.getType().asString();
                     String varName = parameter.getName().getIdentifier();

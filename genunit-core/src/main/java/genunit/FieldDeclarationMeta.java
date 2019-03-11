@@ -1,9 +1,13 @@
 package genunit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FieldDeclarationMeta {
     private String fieldType;
     private String fieldName;
     private String fullFieldType;
+    private List<MethodDeclarationMeta> calls = new ArrayList<>();
 
     public FieldDeclarationMeta(String fieldType, String fieldName) {
         this.fieldType = fieldType;
@@ -32,5 +36,13 @@ public class FieldDeclarationMeta {
 
     public String getFullFieldType() {
         return fullFieldType;
+    }
+
+    public List<MethodDeclarationMeta> getCalls() {
+        return calls;
+    }
+
+    public void setCalls(List<MethodDeclarationMeta> calls) {
+        this.calls = calls;
     }
 }
