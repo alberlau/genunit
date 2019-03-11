@@ -22,18 +22,7 @@
     <option name="FILTER_BY_CURRENT_PROJECT" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b5682302-6cbd-4f18-bb70-fa70b95c0281" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../genunit-core/.idea/uiDesigner.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../genunit-core/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../genunit-core/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../genunit-core/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../genunit-core/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../genunit-core/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../genunit-core/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../genunit-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../genunit-core/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../genunit-core/src/main/java/genunit/FieldDeclarationMeta.java" beforeDir="false" afterPath="$PROJECT_DIR$/../genunit-core/src/main/java/genunit/FieldDeclarationMeta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../genunit-core/src/main/java/genunit/Gen.java" beforeDir="false" afterPath="$PROJECT_DIR$/../genunit-core/src/main/java/genunit/Gen.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../genunit-core/src/main/java/genunit/MetodDeclarationMeta.java" beforeDir="false" afterPath="$PROJECT_DIR$/../genunit-core/src/main/java/genunit/MethodDeclarationMeta.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="b5682302-6cbd-4f18-bb70-fa70b95c0281" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -173,15 +162,14 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552305081022" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552323319293" />
     <property name="last_opened_file_path" value="D:/projects" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="C:/Program Files/nodejs/node" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
-    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.annotationProcessors" />
-    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -243,16 +231,15 @@
       <option name="presentableId" value="Default" />
       <updated>1552208060988</updated>
       <workItem from="1552208062843" duration="521000" />
-      <workItem from="1552244141455" duration="789000" />
+      <workItem from="1552244141455" duration="797000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1310000" />
+    <option name="totallyTimeSpent" value="1318000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-11" y="-11" width="1942" height="1042" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16162162" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -295,6 +282,11 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/../.." />
+    </ignored-roots>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/test/java/genunit/GenTest.java" />
