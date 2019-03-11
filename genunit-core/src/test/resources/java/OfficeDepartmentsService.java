@@ -1,27 +1,27 @@
-package com.accuity.data.service.department;
+package some.test.pkg;
 
-import static com.accuity.data.service.department.RelationshipHelper.getRelationships;
-import static com.accuity.data.util.SearchUtils.getSearchParamsByIds;
+import static sometest.pkg.data.service.department.RelationshipHelper.getRelationships;
+import static sometest.pkg.data.util.SearchUtils.getSearchParamsByIds;
 
-import com.accuity.data.domain.department.DepartmentPosition;
-import com.accuity.data.domain.department.OfficeDepartment;
-import com.accuity.data.domain.department.OfficeDepartments;
-import com.accuity.data.domain.relationship.Relationships;
-import com.accuity.data.domain.task.TaskType;
-import com.accuity.data.exception.EntityNotFoundException;
-import com.accuity.data.rest.client.HeraClient;
-import com.accuity.data.service.async.HeraAsyncService;
-import com.accuity.data.service.bulk.HeraBulkService;
-import com.accuity.data.service.person.PersonService;
-import com.accuity.data.service.relationship.RelationshipService;
-import com.accuity.data.util.StrUtils;
-import com.accuity.domain.AbstractSerializableRoot;
-import com.accuity.domain.legalEntity.LegalEntity;
-import com.accuity.domain.office.Office;
-import com.accuity.domain.person.Person;
-import com.accuity.domain.relationship.Relationship;
-import com.accuity.domain.relationship.RelationshipParty;
-import com.accuity.domain.task.Task;
+import sometest.pkg.data.domain.department.DepartmentPosition;
+import sometest.pkg.data.domain.department.OfficeDepartment;
+import sometest.pkg.data.domain.department.OfficeDepartments;
+import sometest.pkg.data.domain.relationship.Relationships;
+import sometest.pkg.data.domain.task.TaskType;
+import sometest.pkg.data.exception.EntityNotFoundException;
+import sometest.pkg.data.rest.client.SomeClient;
+import sometest.pkg.data.service.async.HeraAsyncService;
+import sometest.pkg.data.service.bulk.HeraBulkService;
+import sometest.pkg.data.service.person.PersonService;
+import sometest.pkg.data.service.relationship.RelationshipService;
+import sometest.pkg.data.util.StrUtils;
+import sometest.pkg.domain.AbstractSerializableRoot;
+import sometest.pkg.domain.legalEntity.LegalEntity;
+import sometest.pkg.domain.office.Office;
+import sometest.pkg.domain.person.Person;
+import sometest.pkg.domain.relationship.Relationship;
+import sometest.pkg.domain.relationship.RelationshipParty;
+import sometest.pkg.domain.task.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +40,7 @@ public class OfficeDepartmentsService {
     private final OtherPositionUpdateService otherPositionUpdateService;
     private final RelationshipService relationshipService;
     private final HeraBulkService heraBulkService;
-    private final HeraClient heraClient;
+    private final SomeClient SomeClient;
     private final PersonService personService;
     private final HeraAsyncService heraAsyncService;
 
@@ -50,7 +50,7 @@ public class OfficeDepartmentsService {
         OtherPositionUpdateService otherPositionUpdateService,
         RelationshipService relationshipService,
         HeraBulkService heraBulkService,
-        HeraClient heraClient,
+        SomeClient SomeClient,
         PersonService personService, HeraAsyncService heraAsyncService) {
         this.departmentService = departmentService;
         this.departmentUpdateService = departmentUpdateService;
@@ -58,7 +58,7 @@ public class OfficeDepartmentsService {
         this.otherPositionUpdateService = otherPositionUpdateService;
         this.relationshipService = relationshipService;
         this.heraBulkService = heraBulkService;
-        this.heraClient = heraClient;
+        this.SomeClient = SomeClient;
         this.personService = personService;
         this.heraAsyncService = heraAsyncService;
     }
@@ -145,14 +145,14 @@ public class OfficeDepartmentsService {
     }
 
     private LegalEntity getLegalEntityFromOffice(String officeId) {
-        Office office = heraClient.getEntityByID(officeId, Office.class);
+        Office office = SomeClient.getEntityByID(officeId, Office.class);
         String legalEntityResource = null;
         if (office != null && office.getSummary().getInstitution().getLink() != null) {
             legalEntityResource = office.getSummary().getInstitution().getLink().getHref();
         }
 
         if (legalEntityResource != null) {
-            Optional<LegalEntity> legalEntity = heraClient.getEntityByHref(legalEntityResource, LegalEntity.class);
+            Optional<LegalEntity> legalEntity = SomeClient.getEntityByHref(legalEntityResource, LegalEntity.class);
             if (legalEntity.isPresent()) {
                 return legalEntity.get();
             } else {
